@@ -1,0 +1,96 @@
+body {
+    background-color: #f8f9fa;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.outer-card {
+    width: calc(100% - 200px);
+    /* 100% - (2 * 100px) */
+    max-width: 800px;
+    border: 2px solid #17a2b8;
+    border-radius: 10px;
+    margin: 0 auto;
+    /* Center the card horizontally */
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+    /* Enable vertical scrolling if the content exceeds the height */
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-container {
+    flex: 0;
+    /* Expand and take up remaining vertical space */
+    width: 100%;
+    border: 2px solid #17a2b8;
+    border-radius: 10px;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.message-container {
+    flex: 1;
+    /* Expand and take up remaining vertical space */
+    display: inline-table;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* Align items to the bottom */
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.input-group {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+#messageInput {
+    border: 1px solid #17a2b8;
+    width: 100%;
+    border-radius: 5px;
+    padding: 8px;
+    resize: none;
+    height: 150px;
+}
+
+#sendButton {
+    background-color: transparent;
+    border: 1px solid #28a745;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+    font-size: 1.25rem;
+    padding: 12px 20px;
+    margin-top: 10px;
+}
+
+#sendButton:hover {
+    background-color: #28a745;
+    color: #fff;
+}
+
+/* Add this to your chat.css file */
+.message {
+    background-color: #f2f2f2;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+    display: inline-block;
+    max-width: 80%;
+    /* Adjust the maximum width as needed */
+}
+
+/* Style the sender's message differently if needed */
+.message.sender {
+    background-color: #d4edda;
+    /* Example color for the sender's messages */
+}

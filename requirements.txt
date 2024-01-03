@@ -4,4 +4,3 @@ uvicorn
 sqlalchemy
 python-dotenv
 firebase-admin
-
