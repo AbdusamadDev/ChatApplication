@@ -2,13 +2,13 @@ from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from datetime import datetime
 import websockets
 import asyncio
-import json
-import logging
+
+# import logging
 
 
 class WebSocketServer:
     def __init__(self, addr: tuple) -> None:
-        logging.basicConfig(level=logging.DEBUG)
+        # logging.basicConfig(level=logging.DEBUG)
         self.addr = addr
         self.clients = set()
 
@@ -18,11 +18,25 @@ class WebSocketServer:
     async def recieve(self, client):
         return await client.recv()
 
+    async def disconnect(self, websocket):
+        self.clients.remove(websocket)
+
     async def communicate(self, input_client):
         while True:
-            for client in self.clients:
-                # if client.remote_address[0] != input_client.remote_address[0]:
-                await client.send(str(await input_client.recv()))
+            try:
+                data = await input_client.recv()
+                # print("Number of clients: ", len(self.clients))
+                for client in self.clients:
+                    # if client.remote_address[0] != input_client.remote_address[0]:
+                    # if client.open:
+                        await client.send()
+                        print(client.open, client.remote_address)
+                    # else:
+                        # await self.disconnect(client)
+                    # break
+            except RuntimeError as error:
+                print(error)
+                print("Number of clients: ", len(self.clients))
 
     async def handle_server(self, websocket, path):
         await self.connect(websocket)
@@ -40,8 +54,8 @@ class WebSocketServer:
     def run(self):
         # websockets.WebSocketServerProtocol.
         run_server = websockets.serve(self.handle_server, *self.addr)
-        logging.info(f"Websocket server started running on {self.addr}")
-        logging.info("Ctrl+c to get out of loop")
+        # logging.info(f"Websocket server started running on {self.addr}")
+        # logging.info("Ctrl+c to get out of loop")
         asyncio.get_event_loop().run_until_complete(run_server)
         asyncio.get_event_loop().run_forever()
 
