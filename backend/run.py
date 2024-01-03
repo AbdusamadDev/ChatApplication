@@ -1,7 +1,6 @@
-from flask import Flask
 from api import api_blueprint as api
 from flask_cors import CORS
-
+from flask import Flask
 
 app = Flask(
     __name__,
@@ -11,5 +10,7 @@ app = Flask(
 )
 CORS(app, origins=["*"], supports_credentials=True)
 
-app.register_blueprint(api)
-app.run("0.0.0.0", 5000, debug=True)
+
+if __name__ == "__main__":
+    app.register_blueprint(api)
+    app.run("0.0.0.0", 5000, debug=True)

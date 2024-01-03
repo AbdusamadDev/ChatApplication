@@ -3,10 +3,12 @@ from datetime import datetime
 import websockets
 import asyncio
 import json
+import logging
 
 
 class WebSocketServer:
     def __init__(self, addr: tuple) -> None:
+        logging.basicConfig(level=logging.DEBUG)
         self.addr = addr
         self.clients = set()
 
@@ -19,35 +21,31 @@ class WebSocketServer:
     async def communicate(self, input_client):
         while True:
             for client in self.clients:
-                print("Client: ", client)
+                # if client.remote_address[0] != input_client.remote_address[0]:
                 await client.send(str(await input_client.recv()))
 
     async def handle_server(self, websocket, path):
         await self.connect(websocket)
         while True:
-            await websocket.send(
-                json.dumps(
-                    {
-                        "chat_id": "chat id",
-                        "messages": {"user a": "wassup", "user b": "nothin much"},
-                    }
-                )
-            )
             try:
-                # while True:
                 print("Keeping alive: [%s]" % datetime.now())
                 print("Number of clients: ", len(self.clients))
                 print("Client addresses: ", self.clients)
+                for i in self.clients:
+                    print(i.open, i.remote_address)
                 await self.communicate(websocket)
             except (ConnectionClosedError, ConnectionClosedOK):
                 continue
 
     def run(self):
-        run_server = websockets.serve(self.handle_server, "192.168.100.39", 8000)
+        # websockets.WebSocketServerProtocol.
+        run_server = websockets.serve(self.handle_server, *self.addr)
+        logging.info(f"Websocket server started running on {self.addr}")
+        logging.info("Ctrl+c to get out of loop")
         asyncio.get_event_loop().run_until_complete(run_server)
         asyncio.get_event_loop().run_forever()
-        # websockets.WebSocketServer.
 
 
-server = WebSocketServer(tuple())
-server.run()
+if __name__ == "__main__":
+    server = WebSocketServer(addr=("0.0.0.0", 8000))
+    server.run()
