@@ -1,11 +1,10 @@
-from sqlalchemy import Column, Integer, String, Table
-from configuration import metadata
+from sqlalchemy import Column, Integer
+from configuration import Base
+from sqlalchemy import String
 
 
-users_table = Table(
-    "users",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("username", String(50), unique=True),
-    Column("email", String(120), unique=True),
-)
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50))
+    age = Column(Integer)
