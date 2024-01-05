@@ -1,0 +1,23 @@
+Tools used in chat application project
+    - websockets - asynchronous socket programming library
+    - Flask - Popular lightweight API framework of Python
+    - sqlalchemy - Object relational mapping tool which helps to manage database operations
+    - alembic - Migration and version control tool for migrating database changes
+
+Usage of sqlalchemy:
+
+1. pip install sqlalchemy
+2. Create configuration.py file.
+3. Load MetaData, declarative_base() to global variables and use in any files and configurations
+4. Create custom Tables using Table instance. Usage source code shown in database folder
+
+
+Usage of Alembic:
+
+1. pip install alembic
+2. alembic init (this command is recommended to call in root directory)
+3. Modify alembic.ini file: put the location of the database like this:
+    - sqlalchemy.url = sqlite:///database/db.sqlite3 (Enough to just get started)
+4. Modify env.py file in root/alembic/env.py. Pass the declarative_base() global variable to "target_metadata"
+5. alembic revision --autogenerate -m "Commit message"
+6. alembic upgrade head
