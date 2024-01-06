@@ -19,5 +19,6 @@ Usage of Alembic:
 3. Modify alembic.ini file: put the location of the database like this:
     - sqlalchemy.url = sqlite:///database/db.sqlite3 (Enough to just get started)
 4. Modify env.py file in root/alembic/env.py. Pass the declarative_base() global variable to "target_metadata"
+    - Pass the Base (declarative_base()) variable which is used in models.py or used in your models, which will identify the model updates in your code
 5. alembic revision --autogenerate -m "Commit message"
 6. alembic upgrade head
