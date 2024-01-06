@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, Table
-from configuration import Base, metadata
+from database.configuration import Base, metadata
 from sqlalchemy import String
 
 
@@ -7,7 +7,14 @@ class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     username = Column(String(50))
-    email = Column(Integer)
+    emailing = Column(Integer)
+    password = Column(String(100))
+
+class Userqwe(Base):
+    __tablename__ = "asdnower"
+    id = Column(Integer, primary_key=True)
+    username = Column(String(50))
+    emailsing = Column(Integer)
     password = Column(String(100))
 
 
