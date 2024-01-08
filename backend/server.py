@@ -1,14 +1,19 @@
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
+from database.models import GlobalChatManager
+from .exceptions import ValidationError
 from datetime import datetime
+from .client import Client
 import websockets
 import asyncio
 import logging
+import json
 
 
 class WebSocketServer:
     def __init__(self, addr: tuple) -> None:
         self.addr = addr
         self.clients = set()
+        self.database = GlobalChatManager()
 
     async def connect(self, client):
         logging.info(("Client connected: ", client))
@@ -28,28 +33,38 @@ class WebSocketServer:
                 print("Keeping alive: [%s]" % datetime.now())
                 print("Number of clients: ", len(self.clients))
                 print("Client addresses: ", self.clients)
-                if input_client.open:
-                    data = await input_client.recv()
-                else:
-                    self.disconnect(input_client)
+                data = await input_client.recv()
+                if "message" not in input_client.dict_message(data).keys():
+                    error_message = {
+                        "error": "validation_error",
+                        "message": "The 'message' key is required.",
+                    }
+                    await input_client.send(json.dumps(error_message))
+                    continue
                 for client in self.clients:
-                    await client.send(data)
+                    await client.send_and_save(data)
+
             except RuntimeError as error:
                 print(error)
                 print("Number of clients: ", len(self.clients))
 
-    async def handle_server(self, websocket, path):
+    async def handle_server(self, websocket: Client, path):
         await self.connect(websocket)
         while True:
             try:
-                await self.communicate(websocket)
+                if websocket.open:
+                    # Main and simple way to pass user to conversation
+                    await self.communicate(websocket)
+                else:
+                    await self.disconnect(websocket)
+
             except (ConnectionClosedError, ConnectionClosedOK):
-                self.disconnect(websocket)
-                # Save messages to database
+                if websocket in self.clients:
+                    await self.disconnect(websocket)
                 continue
 
     def run(self):
-        run_server = websockets.serve(self.handle_server, *self.addr)
+        run_server = websockets.serve(self.handle_server, *self.addr, klass=Client)
         logging.info(f"Websocket server started running on {self.addr}")
         logging.info("Ctrl+c to get out of loop")
         asyncio.get_event_loop().run_until_complete(run_server)

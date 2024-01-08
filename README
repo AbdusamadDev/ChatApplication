@@ -22,3 +22,4 @@ Usage of Alembic:
     - Pass the Base (declarative_base()) variable which is used in models.py or used in your models, which will identify the model updates in your code
 5. alembic revision --autogenerate -m "Commit message"
 6. alembic upgrade head
+
