@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="{{ url_for('static', path='js/groups.js') }}"></script>
+    <link href="{{ url_for('static', path='css/signup.css') }}" rel="stylesheet">
+</head>
+
+<body>
+    <div class="signup-container">
+        <h2>Create a chat group</h2>
+        <form class="signup-form" method="post" id="groupForm">
+            <div class="form-group">
+                <label for="username">Name of the group:</label>
+                <input type="text" id="title" name="group" required>
+            </div>
+            <div class="form-group">
+                <label for="username">Description of the group:</label>
+                <input type="text" id="description" name="group" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Create</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch(
+                API_URL + "/auth/me",
+                {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            ).then(function (response) {
+                if (response.status === 401) {
+                    // Redirect to login page
+                    window.location.href = '/login.html'; // Change the URL to your login page
+                } else {
+                    return response.json();
+                }
+            }).then(function (data) {
+                // Handle response data if needed
+            }).catch(function (error) {
+                console.error('Error:', error);
+            });
+        });
+        const WEBSOCKET_URL = "ws://localhost:8000";
+        const API_URL = "http://localhost:5000";
+        const accessToken = localStorage.getItem("token");
+        document.querySelector('#groupForm').addEventListener('submit', createGroup);
+
+        function createGroup(event) {
+            event.preventDefault();
+            const form = event.target;
+            const titleInput = form.querySelector('#title').value; // Get the value of the title input
+            const descriptionInput = form.querySelector('#description').value; // Get the value of the description input
+
+            const postData = {
+                title: titleInput,
+                description: descriptionInput
+            };
+            console.log(postData);
+            fetch(API_URL + '/api/groups', {
+                method: 'POST',
+                body: JSON.stringify(postData),
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    window.location.href = '/t/chat'
+                }).then(data => { alert("Success!", "Group created successfully!") })
+                .catch(error => {
+                    // Handle errors
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>

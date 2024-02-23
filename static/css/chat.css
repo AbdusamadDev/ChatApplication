@@ -1,0 +1,152 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", sans-serif;
+    /* Telegram Desktop uses Segoe UI on Windows */
+    background-color: #eff0f4;
+    /* Telegram Desktop's background color */
+}
+
+.outer-card {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.chat-header {
+    background-color: #0088cc;
+    /* Telegram's blue color */
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.chat-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+#resizableSidebar {
+    width: 280px;
+    /* Telegram Desktop's sidebar width */
+    min-width: 200px;
+    /* Minimum width to prevent it from becoming too narrow */
+    padding: 10px;
+    border-right: 1px solid #d4d4d4;
+    /* Telegram's sidebar border color */
+    overflow-y: auto;
+    resize: horizontal;
+    overflow: auto;
+}
+
+#messageContainer {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.message {
+    background-color: #d9e1ec;
+    /* Telegram Desktop's message background color */
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    display: inline-block;
+    max-width: 35%;
+    word-wrap: break-word;
+}
+
+#messageForm {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #d4d4d4;
+    /* Telegram's separator color */
+    padding: 10px;
+}
+
+#messageInput {
+    flex: 1;
+    border-radius: 20px;
+    margin-right: 10px;
+    padding: 10px;
+    border: 1px solid #d4d4d4;
+    /* Telegram's input border color */
+}
+
+#sendButton {
+    border-radius: 20px;
+    background-color: #0088cc;
+    /* Telegram's blue color */
+    color: #fff;
+    padding: 8px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .outer-card {
+        border-radius: 0;
+        /* Remove border-radius for small screens */
+    }
+
+    .chat-container {
+        flex-direction: column;
+        /* Stack elements vertically on small screens */
+    }
+
+    #resizableSidebar {
+        width: 100%;
+        /* Occupy full width on small screens */
+        border-right: none;
+        /* Remove border on small screens */
+        border-bottom: 1px solid #d4d4d4;
+        /* Add bottom border for separation */
+        resize: none;
+        /* Disable resizing on small screens */
+    }
+
+    #messageInput {
+        max-width: none;
+        /* Allow input field to expand on small screens */
+    }
+}
+
+.user-card {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    /* Make user card clickable */
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.user-details {
+    flex: 1;
+}
+
+.user-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.user-email {
+    color: #6c757d;
+    margin-bottom: 0;
+}

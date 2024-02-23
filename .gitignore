@@ -1,0 +1,10 @@
+venv
+__pycache__
+alembic/__pycache__
+alembic/versions/__pycache__
+api/__pycache__
+api/auth/__pycache__
+api/base/__pycache__
+api/renderers/__pycache__
+backend/__pycache__
+database/__pycache__

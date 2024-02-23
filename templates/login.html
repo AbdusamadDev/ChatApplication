@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+</head>
+
+<body>
+    <div class="signup-container"> 
+        <form id="userForm" class="signup-form">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Sign Up</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.getElementById("userForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = {
+                username: formData.get('username'),
+                password: formData.get('password')
+            };
+
+            try {
+                const response = await fetch('/auth/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) {
+                    const errorMessage = await response.text();
+                    throw new Error(errorMessage);
+                }
+                const responseData = await response.json();
+                console.log(responseData);
+
+                // Store token in localStorage
+                localStorage.setItem('token', responseData.token);
+
+                // Redirect to chat page
+                window.location.href = '/t/chat';
+            } catch (error) {
+                console.error('Error:', error);
+                // Handle errors, for example, show an error message to the user
+                alert("Error occurred: " + error.message);
+            }
+        });
+    </script>
+</body>
+
+</html>

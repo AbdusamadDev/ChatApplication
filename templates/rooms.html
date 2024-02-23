@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player</title>
+</head>
+
+<body>
+
+    <audio controls id="audioPlayer">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        async function playAudio() {
+            try {
+                const response = await fetch("http://localhost:5000/api/media/audio/group_763b5f5e-464f-4b87-a7c4-14fee99c8849/recorded_audio.mp3", { method: "GET" });
+                const blobData = await response.blob();
+                const audioPlayer = document.getElementById('audioPlayer');
+                const url = URL.createObjectURL(blobData);
+                audioPlayer.src = url;
+                audioPlayer.play();
+            } catch (error) {
+                console.error('Error fetching or playing audio:', error);
+            }
+        }
+
+        // Call playAudio when user interacts with the document, like clicking a button
+        document.addEventListener('DOMContentLoaded', () => {
+            const playButton = document.getElementById('playButton');
+            playButton.addEventListener('click', playAudio);
+        });
+    </script>
+
+    <!-- Add a button to trigger audio playback -->
+    <button id="playButton">Play Audio</button>
+
+</body>
+
+</html>

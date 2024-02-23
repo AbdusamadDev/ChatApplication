@@ -1,0 +1,79 @@
+Tools used in chat application project
+    - websockets - asynchronous socket programming library
+    - Flask - Popular lightweight API framework of Python
+    - sqlalchemy - Object relational mapping tool which helps to manage database operations
+    - alembic - Migration and version control tool for migrating database changes
+
+Usage of sqlalchemy:
+
+1. pip install sqlalchemy
+2. Create configuration.py file.
+3. Load MetaData, declarative_base() to global variables and use in any files and configurations
+4. Create custom Tables using Table instance. Usage source code shown in database folder
+
+
+Usage of Alembic:
+
+1. pip install alembic
+2. alembic init (this command is recommended to call in root directory)
+3. Modify alembic.ini file: put the location of the database like this:
+    - sqlalchemy.url = sqlite:///database/db.sqlite3 (Enough to just get started)
+4. Modify env.py file in root/alembic/env.py. Pass the declarative_base() global variable to "target_metadata"
+    - Pass the Base (declarative_base()) variable which is used in models.py or used in your models, which will identify the model updates in your code
+5. alembic revision --autogenerate -m "Commit message"
+6. alembic upgrade head
+
+
+Usage of Docker:
+
+1. Create a Dockerfile and docker-compose.yml files.
+2. Configure and write commands into those files
+3. Grant permissions: sudo usermod -aG docker $USER
+4. [OPTIONAL] - Check docker status: sudo systemctl status docker
+5. If not already running: sudo systemctl start docker
+6. Check permissions: ls -l /var/run/docker.sock
+7. sudo chown :docker /var/run/docker.sock
+8. At last it would be good to restart docker: sudo systemctl restart docker
+
+
+
+STRUCTURE
+_____________________________________
+├── run.py    # fastapi base routers \
+├── database
+│   ├── legacy
+│   │   ├── managers.py
+│   │   ├── utils.py
+│   │   └── __init__.py
+│   ├── __init__.py
+│   ├── manager.py
+│   ├── configuration.py
+│   ├── models.py
+│   ├── nosql.py
+│   └── tests.py
+├── backend
+│   ├── __init__.py
+│   ├── client.py
+│   ├── server.py      # important one 
+│   ├── tests.py
+│   ├── utils.py
+│   ├── exceptions.py
+│   └── datastructure.py
+├── api
+│   ├── auth
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   └── __init__.py
+│   ├── renderers
+│   │   ├── views.py
+│   │   └── __init__.py
+│   ├── groups  # the chat group CRUD
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   └── __init__.py
+│   └── __init__.py
+├── static
+│      ├──  js
+│      └──  css
+└──  templates
+        └──  html files go here ...
