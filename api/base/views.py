@@ -34,8 +34,8 @@ MB = 1024 * 1024
 @router.get("/groups", response_class=JSONResponse)
 async def get_groups(user=Depends(get_current_user)):
     try:
-        groups = GroupMessageManager(...)
-        group_ids = groups.group_ids()
+        groups = GroupMessageManager(table_name="Group")
+        group_ids = groups.get_paginated_response()
         return {"groups": group_ids}
     except Exception as error:
         raise HTTPException(
@@ -46,13 +46,14 @@ async def get_groups(user=Depends(get_current_user)):
 
 @router.get("/messages/{group_id}", response_class=JSONResponse)
 async def get_messages(
+    request: Request,
     group_id: str,
     page: int = Query(1, ge=1),
     user=Depends(get_current_user),
 ):
     try:
         database = GroupMessageManager(table_name=group_id)
-        return database.get_paginated_response(page)
+        return database.get_paginated_response(page, request.url)
     except OperationalError as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -70,8 +71,8 @@ async def create_new_chat_group(
             "PROTOCOL", "http"
         ).lower()  # Default to "http" if PROTOCOL is not set
         host = os.environ.get(
-            "HOST", "localhost"
-        )  # Default to "localhost" if HOST is not set
+            "HOST", "192.168.100.39"
+        )  # Default to "192.168.100.39" if HOST is not set
         title = serializer.title
         description = serializer.description
 

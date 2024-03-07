@@ -16,5 +16,5 @@ Session = sessionmaker(bind=engine)
 session = Session()
 print(path)
 # For MySQL or PostgreSQL, use something like:
-# engine = create_engine('mysql://user:password@localhost/dbname')
-# engine = create_engine('postgresql://user:password@localhost/dbname')
+# engine = create_engine('mysql://user:password@192.168.100.39/dbname')
+# engine = create_engine('postgresql://user:password@192.168.100.39/dbname')

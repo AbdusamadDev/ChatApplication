@@ -4,10 +4,10 @@ from backend.exceptions import DisconnectClientException
 from database.manager import GroupMessageManager
 from backend.client import Client
 
+from datetime import datetime
 import websockets
 import asyncio
 import logging
-import os
 
 
 class WebSocketServer:
@@ -59,29 +59,17 @@ class WebSocketServer:
             if input_client.open:
                 data = await input_client.recv()
                 data = input_client.to_dict(data)
-                # data["username"] = input_client.client_id
-                content_data = data.get("data")
+                content_data = data.get("message")
                 data_type = data.get("type")
-                logging.info(f"Audio raw data: {content_data}")
-                print(data_type)
-                if data_type == "audio":
-                    path = os.path.join(
-                        os.environ.get("BASE_DIR"),
-                        "media/audios",
-                        str(input_client.group_id),
-                        "test.mp3",
-                    )
-                    content_data = os.path.join(
-                        "/media/audios", str(input_client.group_id), "test.mp3"
-                    )
-                    # if not os.path.exists(path):
-                    #     os.makedirs(path)
-                    # with open(path, "wb") as audio_file:
-                    #     audio_file.write(content_data)
-                logging.info("USER IDDDDD>>>>>>>>> " + str(input_client.client_id))
+                current_time = datetime.now()
+                formatted_time = current_time.strftime("%I:%M %p")
                 self.chats[input_client.group_id]["database"].add(
-                    message=content_data, user_id=input_client.client_id
+                    message=content_data,
+                    user_id=input_client.client_id,
+                    type=data_type,
+                    sent_at=formatted_time,
                 )
+                data["sent_at"] = formatted_time
                 await self.broadcast(data=data, client=input_client)
             else:
                 await input_client.close()

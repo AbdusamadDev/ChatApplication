@@ -16,7 +16,7 @@
     <script>
         async function playAudio() {
             try {
-                const response = await fetch("http://localhost:5000/api/media/audio/group_763b5f5e-464f-4b87-a7c4-14fee99c8849/recorded_audio.mp3", { method: "GET" });
+                const response = await fetch("http://192.168.100.39:5000/api/media/audio/group_763b5f5e-464f-4b87-a7c4-14fee99c8849/recorded_audio.mp3", { method: "GET" });
                 const blobData = await response.blob();
                 const audioPlayer = document.getElementById('audioPlayer');
                 const url = URL.createObjectURL(blobData);

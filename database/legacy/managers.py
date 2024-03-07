@@ -1,5 +1,5 @@
 from sqlalchemy.exc import OperationalError, PendingRollbackError, IntegrityError
-from sqlalchemy import Table, inspect, desc, select
+from sqlalchemy import Table, inspect, desc, select, asc
 import logging
 
 from ..configuration import session, engine, Base, metadata
@@ -128,9 +128,9 @@ class BaseTableClassManager:
         offset = (page - 1) * self.page_size
         paginated_query = (
             session.query(self.table)
-            .order_by(desc("id"))
-            .filter(self.table.c.id >= offset)
-            .filter(self.table.c.id < offset + self.page_size)
+            .order_by(desc(self.table.c.id))  # Order by ID in descending order
+            .offset(offset)
+            .limit(self.page_size)
             .all()
         )
         messages = []
@@ -146,11 +146,11 @@ class BaseTableClassManager:
                         "username": user.username,
                         "email": user.email,
                     },
-                    "sent_at": message.created_at.isoformat(),
+                    "sent_at": message.sent_at
                 }
                 messages.append(message_dict)
 
-        return messages
+        return messages[::-1]
 
     def get_paginated_response(self, page, url):
         start = time.time()

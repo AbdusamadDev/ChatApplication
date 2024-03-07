@@ -13,7 +13,7 @@ async def handle_audio(websocket, path):
         print("Connection closed unexpectedly")
 
 
-start_server = websockets.serve(handle_audio, "localhost", 8765)
+start_server = websockets.serve(handle_audio, "192.168.100.39", 8765)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

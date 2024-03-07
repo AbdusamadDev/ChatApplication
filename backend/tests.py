@@ -17,7 +17,7 @@
 #         print(f"Client disconnected: {websocket.remote_address}")
 
 # async def main():
-#     server_address = "localhost"
+#     server_address = "192.168.100.39"
 #     server_port = 8000
 
 #     # Create the WebSocket server

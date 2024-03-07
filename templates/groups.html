@@ -50,8 +50,8 @@
                 console.error('Error:', error);
             });
         });
-        const WEBSOCKET_URL = "ws://localhost:8000";
-        const API_URL = "http://localhost:5000";
+        const WEBSOCKET_URL = "ws://192.168.100.39:8000";
+        const API_URL = "http://192.168.100.39:5000";
         const accessToken = localStorage.getItem("token");
         document.querySelector('#groupForm').addEventListener('submit', createGroup);
 

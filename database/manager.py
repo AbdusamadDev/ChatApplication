@@ -3,6 +3,7 @@ from sqlalchemy import (
     DateTime,
     Integer,
     Column,
+    String,
     Table,
     Text,
     func,
@@ -13,7 +14,6 @@ from .models import User, UserJoinedGroups, Group
 from .configuration import metadata
 
 import time
-
 
 class GroupMessageManager(BaseTableClassManager):
     def __init__(self, table_name: str | None = None) -> None:
@@ -29,12 +29,14 @@ class GroupMessageManager(BaseTableClassManager):
         return Table(
             self.name,
             metadata,
-            Column("id", Integer, primary_key=True),    
+            Column("id", Integer, primary_key=True),
             Column("user_id", ForeignKey("users.id")),
             Column("message", Text(length=5000)),
-            Column("created_at", DateTime, default=func.now()),
+            Column("type", String(20)),
+            Column("sent_at", String(50)),
             extend_existing=True,
         )
+
 
 class DirectMessagingManager(BaseTableClassManager):
     def __init__(self, table_name: str | None = None) -> None:
@@ -58,8 +60,10 @@ class DirectMessagingManager(BaseTableClassManager):
 class UserManager(BaseDeclarativeManager):
     meta = User
 
+
 class UserJoinedGroupsManager(BaseDeclarativeManager):
     meta = UserJoinedGroups
+
 
 class GroupManager(BaseDeclarativeManager):
     meta = Group

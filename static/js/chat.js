@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async function () {
-    const WEBSOCKET_URL = "ws://localhost:8000";
-    const API_URL = "http://localhost:5000";
+    const WEBSOCKET_URL = "ws://192.168.100.39:8000";
+    const API_URL = "http://192.168.100.39:5000";
     const recordButton = document.getElementById('startRecordingButton');
     const stopButton = document.getElementById('stopRecordingButton');
     const messageInput = document.getElementById('messageInput');
@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     async function sendMessage(event) {
+        console.log(clients);
         event.preventDefault();
         const message = messageInput.value.trim();
         if (message !== "") {
@@ -76,7 +77,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         try {
             const responseData = await authorizedFetch("/api/users");
             if (responseData.hasOwnProperty('data')) {
-                const users = responseData.data;
+                const users = responseData.data;    
                 users.forEach(user => {
                     const userCard = document.createElement("div");
                     userCard.classList.add("user-card");
