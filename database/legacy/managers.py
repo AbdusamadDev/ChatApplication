@@ -10,8 +10,37 @@ from datetime import datetime
 import time
 
 
-class BaseDeclarativeManager:
+class BaseManager:
+    page_size = None
+
+    def count(self) -> int:
+        """Overridable .count() method"""
+        pass
+
+    def paginate(self, *args, **kwargs):
+        """
+        A paginate function which should be overriden later
+        on when using this class
+        """
+        pass
+
+    def get_paginated_response(self, page, url):
+        start = time.time()
+        count = self.count()
+        response_body = {"total": count}
+        if page in range(count - self.page_size, count):
+            response_body["next_page"] = f"{url}?page={page + 1}"
+        if page > 1:
+            response_body["previous_page"] = f"{url}?page={page - 1}"
+        end = time.time()
+        response_body["elapsed_time"] = end - start
+        response_body["data"] = self.paginate()
+        return response_body
+
+
+class BaseDeclarativeManager(BaseManager):
     meta: Base = None  # type: ignore
+    page_size = 25
 
     def __init__(self) -> None:
         assert self.meta is not None, TypeError("Meta can not be None")
@@ -27,6 +56,9 @@ class BaseDeclarativeManager:
             raise IntegrityError(
                 statement="UNIQUE constraint failed", params=..., orig=...
             )
+
+    def count(self) -> int:
+        return session.query(self.meta).count()
 
     def all(self):
         records = session.query(self.meta).all()
@@ -89,7 +121,7 @@ class BaseDeclarativeManager:
             raise error
 
 
-class BaseTableClassManager:
+class BaseTableClassManager(BaseManager):
     table: Table = None
     page_size: int = 40
 
@@ -101,6 +133,9 @@ class BaseTableClassManager:
         inspector = inspect(engine)
         table_names = inspector.get_table_names()
         return table_names
+
+    def count(self) -> int:
+        return session.query(self.table).count()
 
     def create(self):
         try:
@@ -123,47 +158,6 @@ class BaseTableClassManager:
         for row in session.execute(select_stmt):
             results.append(dict(row._mapping))
         return results
-
-    def paginate(self, page: int = 1):
-        offset = (page - 1) * self.page_size
-        paginated_query = (
-            session.query(self.table)
-            .order_by(desc(self.table.c.id))  # Order by ID in descending order
-            .offset(offset)
-            .limit(self.page_size)
-            .all()
-        )
-        messages = []
-        for message in paginated_query:
-            user_id = message.user_id
-            user = session.query(User).filter(User.id == user_id).first()
-            if user:
-                message_dict = {
-                    "id": message.id,
-                    "message": message.message,
-                    "user": {
-                        "id": user.id,
-                        "username": user.username,
-                        "email": user.email,
-                    },
-                    "sent_at": message.sent_at
-                }
-                messages.append(message_dict)
-
-        return messages[::-1]
-
-    def get_paginated_response(self, page, url):
-        start = time.time()
-        count = self.count()
-        response_body = {"total": count}
-        if page in range(count - self.page_size, count):
-            response_body["next_page"] = f"{url}?page={page + 1}"
-        if page > 1:
-            response_body["previous_page"] = f"{url}?page={page - 1}"
-        end = time.time()
-        response_body["elapsed_time"] = end - start
-        response_body["data"] = self.paginate()
-        return response_body
 
     def filter(self, **kwargs):
         return session.execute(self.table.select().where(**kwargs))
@@ -199,6 +193,3 @@ class BaseTableClassManager:
         except OperationalError as error:
             session.rollback()
             raise error
-
-    def count(self) -> int:
-        return session.query(self.table).count()

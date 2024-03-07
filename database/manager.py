@@ -7,13 +7,15 @@ from sqlalchemy import (
     Table,
     Text,
     func,
+    desc,
 )
 
 from .legacy.managers import BaseTableClassManager, BaseDeclarativeManager
 from .models import User, UserJoinedGroups, Group
-from .configuration import metadata
+from .configuration import metadata, session
 
 import time
+
 
 class GroupMessageManager(BaseTableClassManager):
     def __init__(self, table_name: str | None = None) -> None:
@@ -36,6 +38,34 @@ class GroupMessageManager(BaseTableClassManager):
             Column("sent_at", String(50)),
             extend_existing=True,
         )
+
+    def paginate(self, page: int = 1):
+        offset = (page - 1) * self.page_size
+        paginated_query = (
+            session.query(self.table)
+            .order_by(desc(self.table.c.id))  # Order by ID in descending order
+            .offset(offset)
+            .limit(self.page_size)
+            .all()
+        )
+        messages = []
+        for message in paginated_query:
+            user_id = message.user_id
+            user = session.query(User).filter(User.id == user_id).first()
+            if user:
+                message_dict = {
+                    "id": message.id,
+                    "message": message.message,
+                    "user": {
+                        "id": user.id,
+                        "username": user.username,
+                        "email": user.email,
+                    },
+                    "sent_at": message.sent_at,
+                }
+                messages.append(message_dict)
+
+        return messages[::-1]
 
 
 class DirectMessagingManager(BaseTableClassManager):
@@ -68,10 +98,39 @@ class UserJoinedGroupsManager(BaseDeclarativeManager):
 class GroupManager(BaseDeclarativeManager):
     meta = Group
 
+    @staticmethod
+    def to_dict(obj):
+        """
+        Convert SQLAlchemy object to dictionary with field names as keys.
+        """
+        if hasattr(obj, "__table__"):
+            # If it's an SQLAlchemy ORM object
+            return {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
+        else:
+            # If it's a regular Python object
+            return {
+                key: getattr(obj, key)
+                for key in obj.__dict__.keys()
+                if not key.startswith("_")
+            }
+
+    def paginate(self, page: int = 1):
+        offset = (page - 1) * self.page_size
+        paginated_query = (
+            session.query(self.meta)
+            .order_by(desc(self.meta.id))  # Order by ID in descending order
+            .offset(offset)
+            .limit(self.page_size)
+            .all()
+        )
+        # Returning the paginated results
+        response = [self.to_dict(data) for data in paginated_query]
+        return response
+
 
 if __name__ == "__main__":
-    table = GroupMessageManager(table_name="group_b76e2da7-ac49-4f5f-bfab-cc15ea366a8d")
+    table = GroupManager()
     start = time.time()
-    record = table.delete(pk=12)
+    record = table.get_paginated_response(page=1, url="youtube.com")
     end = time.time()
     print("RECORD: ", record)

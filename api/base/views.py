@@ -32,10 +32,14 @@ MB = 1024 * 1024
 
 
 @router.get("/groups", response_class=JSONResponse)
-async def get_groups(user=Depends(get_current_user)):
+async def get_groups(
+    request: Request,
+    user=Depends(get_current_user),
+    page: int = Query(1, ge=1),
+):
     try:
-        groups = GroupMessageManager(table_name="Group")
-        group_ids = groups.get_paginated_response()
+        groups = GroupManager()
+        group_ids = groups.get_paginated_response(page=page, url=request.url)
         return {"groups": group_ids}
     except Exception as error:
         raise HTTPException(
