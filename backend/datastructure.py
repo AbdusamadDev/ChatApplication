@@ -13,3 +13,16 @@
         ],
     }
 }
+
+# Simpler datastructure
+
+[
+    {
+        "client_id": "1",
+        "connection": "<backend.client.Client object at 0x7fb90b067c10>",
+    },
+    {
+        "client_id": "1",
+        "connection": "<backend.client.Client object at 0x7fb90b067c10>",
+    },
+]

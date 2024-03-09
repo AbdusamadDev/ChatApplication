@@ -128,9 +128,17 @@ class GroupManager(BaseDeclarativeManager):
         return response
 
 
+def add_message_to_db(table_name, **data):
+    table = metadata.tables[table_name]
+    session.execute(table.insert(), data)
+    session.commit()
+
+
 if __name__ == "__main__":
-    table = GroupManager()
-    start = time.time()
-    record = table.get_paginated_response(page=1, url="youtube.com")
-    end = time.time()
-    print("RECORD: ", record)
+    add_message_to_db(
+        table_name="group_6f82b02a-bc8a-4999-a62d-c467bf2bbb1d",
+        user_id=1,
+        message="asdasd",
+        type="asdasd",
+        sent_at="now",
+    )

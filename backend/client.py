@@ -40,10 +40,10 @@ class Client(WebSocketServerProtocol):
     async def set_client_id(self):
         uri = self.path
         parts = uri.split("/")
-        if len(parts) >= 4 and parts[1] == "chat":
-            client_id = parts[2]
-            group_id = parts[3]
-            self.group_id = group_id
+        if len(parts) >= 3 and parts[1] == "chat":
+            client_id = parts[-1]
+            # group_id = parts[3]
+            # self.group_id = group_id
             self.client_id = client_id
         else:
             logging.warning("Invalid URI format. Expected '/chat/<client_id>/<token>'.")
